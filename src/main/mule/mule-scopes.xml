@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a60c1199-e788-4530-b78c-09ff2ab6ceeb" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="Async" doc:id="19072b86-b454-40c6-9134-e29804b85053" >
+		<http:listener doc:name="Listener" doc:id="91895b27-eb58-4cc0-92d9-20af673e064f" config-ref="HTTP_Listener_config" path="/async"/>
+		<logger level="INFO" doc:name="startTime" doc:id="12e56dc8-5b7f-46fa-a7d5-d373242c764c" message='#[payload]'/>
+		<set-variable value='#[(now() &gt;&gt; "IST") as String {format: "hh:mm:ss"}]' doc:name="Set Variable" doc:id="b413580c-1711-4d58-b4b4-c4b3dbeaa012" variableName="start"/>
+		<async doc:name="Async" doc:id="6994b773-2381-4eb1-a515-e197261f4565" >
+			<logger level="INFO" doc:name="Logger1" doc:id="bf6f852c-7687-42b4-b8e6-58499ff2c981" message="#[payload]"/>
+			<logger level="INFO" doc:name="Logger2" doc:id="bace7fbd-0487-48ba-a9e5-d4c238a2fffe" message="#[payload]"/>
+			<logger level="INFO" doc:name="Logger3" doc:id="c6d71a42-2cce-4cae-ab68-91b4e097ce0e" message="#[payload]"/>
+			<logger level="INFO" doc:name="Logger4" doc:id="03dd230f-749e-497b-bb5f-868fa82913eb" message="#[payload]" />
+		</async>
+		<set-variable value='#[(now() &gt;&gt; "IST") as String {format: "hh:mm:ss"}]' doc:name="Set Variable" doc:id="56df28d0-742a-4eeb-8e33-3a3e4a006ef9" variableName="end"/>
+		<logger level="INFO" doc:name="endTime" doc:id="70fd869b-f244-4a08-bbfe-c5e343765d86" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="9af5064f-1de8-4ad7-b584-c94858251baf" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+Timevar:(vars.end - vars.start)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="startTime1" doc:id="d82b5532-2a8b-4e8c-8083-697b022c31e1" message="#[payload]" />
+	</flow>
+	<flow name="Cache" doc:id="e72a4d49-abe8-48b3-a27f-4d997804e064" >
+		<http:listener doc:name="Listener" doc:id="aa68fe96-10d8-462d-886a-9c6827bcf7d5" config-ref="HTTP_Listener_config" path="/Cache" />
+		<logger level="INFO" doc:name="" doc:id="4ae84893-aee2-4354-9a21-049999486af4" message="#[payload]" />
+		<ee:cache doc:name="Cache" doc:id="4631ef9c-8f08-4719-835b-27910fdfe872" >
+			<flow-ref doc:name="Flow Reference" doc:id="25388d80-17d9-409c-bccc-002a4c074fd2" name="Async"/>
+		</ee:cache>
+		<logger level="INFO" doc:name="" doc:id="6321fb2b-bd22-497c-8f2b-d2dd8f7b2fcf" message="#[payload]" />
+	</flow>
+	<flow name="mule-scopesFlow" doc:id="4a770c7e-2999-4cb4-8fbb-7f10239fa931" >
+		<http:listener doc:name="Listener" doc:id="0743f34b-e18e-4164-bebf-4fe753d4b5c9" config-ref="HTTP_Listener_config" path="/varu"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="b9b04b01-5890-43e1-a9fd-eadedfd72089" />
+	</flow>
+</mule>

@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_19072b86_b454_40c6_9134_e29804b85053_Output_Payload = {| Timevar: Any |}
+
