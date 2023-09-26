@@ -41,5 +41,6 @@ Timevar:(vars.end - vars.start)]]></ee:set-payload>
 	<flow name="mule-scopesFlow" doc:id="4a770c7e-2999-4cb4-8fbb-7f10239fa931" >
 		<http:listener doc:name="Listener" doc:id="0743f34b-e18e-4164-bebf-4fe753d4b5c9" config-ref="HTTP_Listener_config" path="/varu"/>
 		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="b9b04b01-5890-43e1-a9fd-eadedfd72089" />
+		<logger level="INFO" doc:name="Logger" doc:id="16dfab5c-68d8-4819-b283-51f449b21f4e" message='#["checking the payload"]'/>
 	</flow>
 </mule>
